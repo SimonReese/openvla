@@ -198,6 +198,44 @@ class Exp_SigLIP_224px_Droid_Wipe(Exp_SigLIP_224px_Bridge):
     data_mix: str = "droid_wipe"
 
 
+# === [4 GPU] DINO-SigLIP 224px + RLBench Dataset
+@dataclass
+class Exp_DinoSigLIP_224px_RLBench(VLAConfig):
+    vla_id: str = "prism-dinosiglip-224px+rlbench"
+    base_vlm: Union[str, Path] = "prism-dinosiglip-224px+7b"
+
+    freeze_vision_backbone: bool = True     # We try by freezing DINO-SigLIP backbone
+    freeze_llm_backbone: bool = False       # We let LLM learn spatial relations to actions      
+    unfreeze_last_llm_layer: bool = False   # No effect since LLM is not frozen
+
+    # Data Mixture Parameters
+    data_mix: str = "rlbench"
+    shuffle_buffer_size: int = 25_000
+
+    # Optimization Parameters
+    epochs: int = 1000                                  # Epochs to Run (in case `max_steps` is not specified)
+    max_steps: Optional[int] = 15_000                   # [Optional] Max Gradient Steps to Run (overrides `epochs`)
+    expected_world_size: int = 4                        # Expected # of GPUs =>> allows us to gate training on hardware
+    global_batch_size: int = 256                        # Global Batch Size (divided across processes / world size)
+    per_device_batch_size: int = 64                     # Per-Device Batch Size (per-process / individual GPU)
+                                                        #   =>> # of accumulation steps is auto-computed
+
+    learning_rate: float = 2e-5                            # Peak Learning Rate (`lr_scheduler_type` sets warmup/decay)
+    weight_decay: float = 0.02                             # Weight Decay for AdamW Optimizer
+    max_grad_norm: float = 1.0                             # Max Grad Norm (for global gradient clipping)
+    lr_scheduler_type: str = "linear-warmup+cosine-decay"    # LR Scheduler (usually: "constant" | "linear-warmup+cosine-decay")
+    warmup_ratio: float = 0.05                             # Fraction of Steps to Warmup (for warmup LR schedulers)
+
+    train_strategy: str = "fsdp-full-shard"              # Train Strategy (default "fsdp-full-shard")
+
+    # Enable Gradient/Activation Checkpointing (for the LLM Backbone)
+    enable_gradient_checkpointing: bool = True      # Enable Gradient/Activation Checkpointing during Training
+
+    # Mixed Precision Training via Torch Native AMP (`autocast`)
+    enable_mixed_precision_training: bool = True    # Enable Traditional BF16 Mixed Precision
+    reduce_in_full_precision: bool = True           # Accumulate/Reduce All-Gather Gradients in FP32 Full Precision
+
+
 # === Define a VLA Registry Enum for Reference & Validation ===
 @unique
 class VLARegistry(Enum):
@@ -224,6 +262,10 @@ class VLARegistry(Enum):
 
     # === DROID Fine-tuning Configs ===
     SIGLIP_224PX_MX_DROID_WIPE = Exp_SigLIP_224px_Droid_Wipe
+
+    # === [4 GPU] DINO-SigLIP 224px + RLBench Dataset
+    DINOSIGLIP_224PX_RLBENCH = Exp_DinoSigLIP_224px_RLBench
+
 
     @property
     def vla_id(self) -> str:
