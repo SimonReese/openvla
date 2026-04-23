@@ -840,6 +840,13 @@ def libero_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][:, -2:]  # 2D gripper state
     return trajectory
 
+def rlbench_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
+    #trajectory["action"] is already in good shape
+    trajectory["language_instruction"] = trajectory["task"]
+    trajectory["observation"]["EEF_state"] = trajectory["observation"]["state"][:7]
+    trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][7:]
+
+
 
 # === Registry ===
 OXE_STANDARDIZATION_TRANSFORMS = {
@@ -919,4 +926,6 @@ OXE_STANDARDIZATION_TRANSFORMS = {
     "libero_object_no_noops": libero_dataset_transform,
     "libero_goal_no_noops": libero_dataset_transform,
     "libero_10_no_noops": libero_dataset_transform,
+    ### RLBench dataset transform
+    "rlbench" : rlbench_dataset_transform
 }
