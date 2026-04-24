@@ -927,5 +927,5 @@ OXE_STANDARDIZATION_TRANSFORMS = {
     "libero_goal_no_noops": libero_dataset_transform,
     "libero_10_no_noops": libero_dataset_transform,
     ### RLBench dataset transform
-    "rlbench" : rlbench_dataset_transform
+    "rl_bench_builder" : rlbench_dataset_transform
 }
