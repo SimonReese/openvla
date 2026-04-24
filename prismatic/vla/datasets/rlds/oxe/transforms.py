@@ -845,6 +845,8 @@ def rlbench_dataset_transform(trajectory: Dict[str, Any]) -> Dict[str, Any]:
     trajectory["language_instruction"] = trajectory["task"]
     trajectory["observation"]["EEF_state"] = trajectory["observation"]["state"][:7]
     trajectory["observation"]["gripper_state"] = trajectory["observation"]["state"][7:]
+    trajectory["language_instruction"] = trajectory["task"]
+    return trajectory
 
 
 
