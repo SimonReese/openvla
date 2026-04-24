@@ -209,7 +209,7 @@ class Exp_DinoSigLIP_224px_RLBench(VLAConfig):
     unfreeze_last_llm_layer: bool = False   # No effect since LLM is not frozen
 
     # Data Mixture Parameters
-    data_mix: str = "rlbench"
+    data_mix: str = "rl_bench_builder"
     shuffle_buffer_size: int = 25_000
 
     # Optimization Parameters

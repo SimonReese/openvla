@@ -208,8 +208,8 @@ OXE_NAMED_MIXTURES: Dict[str, List[Tuple[str, float]]] = {
     ],
 
     # === RLBench Dataset ===
-    "rlbench" : [
-        ("rlbench", 1.0)
+    "rl_bench_builder" : [
+        ("rl_bench_builder", 1.0)
     ]
 }
 # fmt: on
